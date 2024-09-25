@@ -1,0 +1,15 @@
+.voted-true {
+    color: orange !important;
+}
+
+.voted-false {
+    color: white !important;
+}
+
+.tagify {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.tagify__input{
+    height: 100% !important;
+}

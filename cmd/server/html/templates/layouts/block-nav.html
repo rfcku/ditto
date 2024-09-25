@@ -1,0 +1,25 @@
+<nav id="nav" class="grid-cols-3 flex justify-between fixed top-0 left-0 right-0 z-20 p-3 pt-4 pl-20 pr-20">
+    <div id="nav-left" class="flex justify-center items-center align-middle"></div>
+    <div class="flex  gap-1 align-middle items-center justify-center">
+        <a href="/" class=" font-bold text-3xl">ditto</a>
+    </div>
+    <div id="nav-right" class="flex flex-row gap-2 justify-center items-center align-middle">
+    </div>
+</nav>
+{{ if .session_user }}
+<div class="fixed top-3 left-5 flex flex-row gap-1 z-10">
+    <div class="flex flex-row gap-2 align-middle items-center cursor-pointer">
+        <img src="{{ .session_user.picture }}" alt="{{ .session_user.nickname }}" class="w-5 h-15 rounded-full">
+        <button id="logout" class=" text-sm">logout</button>
+    </div>
+</div>
+{{ end }}
+{{ if .session_user }}
+<div class="fixed top-3 right-5 flex flex-row gap-1 z-10">
+    {{ template "component-balance.html" . }}
+    <div class="flex flex-row gap-2 align-middle items-center cursor-pointer">
+        <img src="{{ .session_user.picture }}" alt="{{ .session_user.nickname }}" class="w-5 h-15 rounded-full">
+        <button id="logout" class="text-sm">base</button>
+    </div>
+</div>
+{{ end }}

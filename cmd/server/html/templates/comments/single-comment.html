@@ -1,0 +1,25 @@
+<div id="comment-{{ .ID }}" class="flex flex-col gap-1" hx-get="/ui/comment/{{ .ID }}" hx-swap="#comment-{{ .ID }}">
+    <div class="flex flex-row justify-start">
+        <h5 class=" text-xs font-bold">
+            <a href="/u/{{ .AuthorID }}">{{ .AuthorID }}</a> *
+        </h5>
+        <div class="text-xs font-bold text-gray-500">{{ .CreatedAt }}</div>
+    </div>
+    <div id="comment-content-{{ .ID }}" class=" text-sm p-2">
+        <p>{{ .Content }}</p>
+    </div>
+    <!-- <div style="font-size: 5px;" class="text-gray-300">{{ .TargetID }}</div> -->
+    <div id="comment-tools-{{.ID}}" class="flex flex-row gap-1">
+        {{template "component-vote-comment.html" .}}
+        {{template "component-reply-comment.html" .}}
+    </div>
+    <div id="comment-form-{{.ID}}"></div>
+    {{ if .Replies }}
+        <div class="flex flex-col gap-2 pl-3 border-l-2 border-gray-200">
+            {{ range .Replies.Data }}
+                {{ template "single-comment.html" . }}
+            {{ end }}
+        </div>
+    {{ end }}
+
+</div>

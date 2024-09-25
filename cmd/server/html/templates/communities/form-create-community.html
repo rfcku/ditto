@@ -1,0 +1,9 @@
+<div class="flex flex-col gap-4">
+    <form id="mainForm-text" hx-post="/ui/community/form/submit" class="flex flex-col gap-3" hx-trigger="submit" hx-ext="json-enc" hx-target="#response" hx-swap="#mainForm" hx-validate>
+    <div class="form-control w-full flex flex-col gap-1">
+        <input type="text" name="title" hx-trigger="validate()" placeholder="Title" class="p-2 border border-1  rounded-lg " required >
+    </div>
+        <button id="submit" type="submit" class="p-2 border border-1  cursor-pointer rounded-lg ">submit</button>
+    </form>
+    <div id="response" class="flex flex-col gap-2"></div>
+</div>

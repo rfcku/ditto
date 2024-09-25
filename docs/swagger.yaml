@@ -1,0 +1,793 @@
+definitions:
+  award.Award:
+    properties:
+      author_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      target_id:
+        type: string
+      type:
+        type: string
+    type: object
+  comment.Comment:
+    properties:
+      author_id:
+        type: string
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      replies:
+        $ref: '#/definitions/comment.CommentPaginated'
+      target_id:
+        type: string
+      voted:
+        type: boolean
+      votes_total:
+        type: integer
+    type: object
+  comment.CommentPaginated:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/comment.CommentView'
+        type: array
+      pag:
+        $ref: '#/definitions/comment.Pagination'
+    type: object
+  comment.CommentView:
+    properties:
+      author_id:
+        type: string
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      replies:
+        $ref: '#/definitions/comment.CommentPaginated'
+      target_id:
+        type: string
+      voted:
+        type: boolean
+      votes_total:
+        type: integer
+    type: object
+  comment.Pagination:
+    properties:
+      current_page:
+        type: integer
+      has_next:
+        type: boolean
+      has_prev:
+        type: boolean
+      limit:
+        type: integer
+      next_link:
+        type: string
+      page:
+        type: integer
+      prev_link:
+        type: string
+      sort_by:
+        type: string
+      total_pages:
+        type: integer
+      total_records:
+        type: integer
+    type: object
+  community.Community:
+    properties:
+      author_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+    type: object
+  file.File:
+    properties:
+      author_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      target_id:
+        type: string
+      type:
+        type: string
+    type: object
+  post.Post:
+    properties:
+      author_id:
+        type: string
+      awards:
+        items:
+          $ref: '#/definitions/award.Award'
+        type: array
+      awards_total:
+        type: integer
+      comments:
+        items:
+          $ref: '#/definitions/comment.CommentPaginated'
+        type: array
+      comments_total:
+        type: integer
+      community:
+        type: string
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      image:
+        type: string
+      link:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      voted:
+        type: boolean
+      votes_total:
+        type: integer
+    type: object
+  user.User:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+  vote.Vote:
+    properties:
+      author_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      target_id:
+        type: string
+      type:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /awards:
+    get:
+      consumes:
+      - application/json
+      description: Get all awards
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Limit number
+        in: query
+        name: limit
+        type: integer
+      - description: Sort by
+        in: query
+        name: sortBy
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/award.Award'
+      summary: Get all awards
+      tags:
+      - awards
+  /awards/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an award
+      parameters:
+      - description: Award ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/award.Award'
+      summary: Delete an award
+      tags:
+      - awards
+    get:
+      consumes:
+      - application/json
+      description: Get an award by ID
+      parameters:
+      - description: Award ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/award.Award'
+      summary: Get an award by ID
+      tags:
+      - awards
+  /awards/:postID/:typeID:
+    post:
+      consumes:
+      - application/json
+      description: Create an award
+      parameters:
+      - description: Post ID
+        in: path
+        name: postID
+        required: true
+        type: string
+      - description: Type ID
+        in: path
+        name: typeID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/award.Award'
+      summary: Create an award
+      tags:
+      - awards
+  /comments/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a comment
+      parameters:
+      - description: Comment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Comment deleted
+          schema:
+            type: string
+      summary: Delete a comment
+      tags:
+      - comments
+  /comments/:targetID:
+    get:
+      consumes:
+      - application/json
+      description: Get all comments
+      parameters:
+      - description: Target ID
+        in: path
+        name: targetID
+        required: true
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Limit number
+        in: query
+        name: limit
+        type: integer
+      - description: Sort by
+        in: query
+        name: sortBy
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/comment.Comment'
+      summary: Get all comments
+      tags:
+      - comments
+    post:
+      consumes:
+      - application/json
+      description: Create a comment
+      parameters:
+      - description: Target ID
+        in: path
+        name: targetID
+        required: true
+        type: string
+      - description: Comment object
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/comment.Comment'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/comment.Comment'
+      summary: Create a comment
+      tags:
+      - comments
+  /community:
+    post:
+      consumes:
+      - application/json
+      description: Create a community
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/community.Community'
+      summary: Create a community
+      tags:
+      - community
+  /community/:
+    get:
+      consumes:
+      - application/json
+      description: Get Communities
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/community.Community'
+      summary: Get a community
+      tags:
+      - community
+  /community/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a community
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/community.Community'
+      summary: Delete a community
+      tags:
+      - community
+    get:
+      consumes:
+      - application/json
+      description: Get a community by ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/community.Community'
+      summary: Get a community by ID
+      tags:
+      - community
+  /files/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a file with the given ID
+      parameters:
+      - description: File ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/file.File'
+      summary: Delete a file
+      tags:
+      - files
+    get:
+      consumes:
+      - application/json
+      description: Get a file by ID
+      parameters:
+      - description: File ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/file.File'
+      summary: Get a file by ID
+      tags:
+      - files
+  /files/:id/read/:
+    get:
+      consumes:
+      - application/json
+      description: Get a file by ID
+      parameters:
+      - description: File ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/file.File'
+      summary: Get a file by ID
+      tags:
+      - files
+  /files/:id/update:
+    put:
+      consumes:
+      - application/json
+      description: Update a file with the given title, content, link and tags
+      parameters:
+      - description: File ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/file.File'
+      summary: Update a file
+      tags:
+      - files
+  /files/:postID:
+    post:
+      consumes:
+      - application/json
+      description: Get all files from post
+      parameters:
+      - description: Post ID
+        in: path
+        name: postID
+        required: true
+        type: string
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Limit number
+        in: query
+        name: limit
+        type: integer
+      - description: Sort by
+        in: query
+        name: sortBy
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/file.File'
+      summary: Get all files from post
+      tags:
+      - files
+  /posts:
+    get:
+      consumes:
+      - application/json
+      description: Get all posts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/post.Post'
+      summary: Get all posts
+      tags:
+      - posts
+    post:
+      consumes:
+      - application/json
+      description: Upload a file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/post.Post'
+      summary: Upload a file
+      tags:
+      - posts
+  /posts/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a post with the given ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/post.Post'
+      summary: Delete a post
+      tags:
+      - posts
+    get:
+      consumes:
+      - application/json
+      description: Get a post by ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/post.Post'
+      summary: Get a post by ID
+      tags:
+      - posts
+    put:
+      consumes:
+      - application/json
+      description: Update a post with the given title, content, link and tags
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/post.Post'
+      summary: Update a post
+      tags:
+      - posts
+  /posts/random:
+    get:
+      consumes:
+      - application/json
+      description: Delete a post with the given ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/post.Post'
+      summary: Get a random post
+      tags:
+      - posts
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create a user
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/user.User'
+      summary: Create a user
+      tags:
+      - users
+  /users/:
+    get:
+      consumes:
+      - application/json
+      description: Get all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.User'
+      summary: Get all users
+      tags:
+      - users
+  /users/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a user with the given ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.User'
+      summary: Delete a user
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Get a user by ID
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.User'
+      summary: Get a user by ID
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update a user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.User'
+      summary: Update a user
+      tags:
+      - users
+  /votes:
+    get:
+      consumes:
+      - application/json
+      description: Get all votes
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Limit number
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vote.Vote'
+      summary: Get all votes
+      tags:
+      - votes
+  /votes/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a vote
+      parameters:
+      - description: Vote ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vote.Vote'
+      summary: Delete a vote
+      tags:
+      - votes
+    get:
+      consumes:
+      - application/json
+      description: Get a vote by ID
+      parameters:
+      - description: Vote ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vote.Vote'
+      summary: Get a vote by ID
+      tags:
+      - votes
+    put:
+      consumes:
+      - application/json
+      description: Update a vote
+      parameters:
+      - description: Vote ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/vote.Vote'
+      summary: Update a vote
+      tags:
+      - votes
+  /votes/{targetID}:
+    post:
+      consumes:
+      - application/json
+      description: Create a vote
+      parameters:
+      - description: Target ID
+        in: path
+        name: targetID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/vote.Vote'
+      summary: Create a vote
+      tags:
+      - votes
+swagger: "2.0"
