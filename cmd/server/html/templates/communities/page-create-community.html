@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en-us">
+
+<head>
+    <title>ditto</title>
+    {{ template "block-header.html" .}}
+</head>
+
+<body class="w-screen min-h-screen h-full dark:bg-zinc-800">
+    {{ template "block-nav.html" .}}
+    {{ if .session_user }}
+    <section class="p-10 mt-20 flex justify-center flex flex-col gap-1 items-center">
+        <div class="flex flex-col gap-2 max-w-2xl w-full">
+            {{ template "form-create-community.html" .}}
+        </div>
+    </section>
+    {{ end }}
+    {{ template "block-footer.html" .}}
+    <script src="/assets/js/form-create-community.js"></script>
+</body>
+
+</html>

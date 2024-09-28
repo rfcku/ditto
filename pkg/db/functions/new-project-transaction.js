@@ -33,7 +33,6 @@ exports = async function (changeEvent) {
         createdAt: new Date(),
       });
 
-      console.log('This was called');
     }
   } catch (err) {
     console.log('error performing mongodb write: ', err.message);

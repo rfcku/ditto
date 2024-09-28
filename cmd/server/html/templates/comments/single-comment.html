@@ -1,25 +1,41 @@
-<div id="comment-{{ .ID }}" class="flex flex-col gap-1" hx-get="/ui/comment/{{ .ID }}" hx-swap="#comment-{{ .ID }}">
-    <div class="flex flex-row justify-start">
-        <h5 class=" text-xs font-bold">
-            <a href="/u/{{ .AuthorID }}">{{ .AuthorID }}</a> *
-        </h5>
-        <div class="text-xs font-bold text-gray-500">{{ .CreatedAt }}</div>
-    </div>
-    <div id="comment-content-{{ .ID }}" class=" text-sm p-2">
-        <p>{{ .Content }}</p>
-    </div>
-    <!-- <div style="font-size: 5px;" class="text-gray-300">{{ .TargetID }}</div> -->
-    <div id="comment-tools-{{.ID}}" class="flex flex-row gap-1">
-        {{template "component-vote-comment.html" .}}
-        {{template "component-reply-comment.html" .}}
-    </div>
-    <div id="comment-form-{{.ID}}"></div>
-    {{ if .Replies }}
-        <div class="flex flex-col gap-2 pl-3 border-l-2 border-gray-200">
-            {{ range .Replies.Data }}
+<div id="comment-{{ .ID }}" class="flex flex-row">
+    <div class="panel flex flex-col gap-1 p-2 w-full">
+        <div class="flex flex-row justify-start items-center align-middle gap-2">
+            <div class="rounded-full text-gray-950 dark:text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-4">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                </svg>
+            </div>
+            <div class="w-4 h-4 bg-zinc-100 border border-1 rounded-full"></div>
+            <h5 class=" text-xs font-bold dark:text-zinc-400">
+                <a href="/u/{{ .AuthorID }}">{{ .AuthorID }}</a>
+            </h5>
+            <div class="text-xs text-zinc-500 ">{{ .CreatedAt }}</div>
+        </div>
+        <div id="comment-content-{{ .ID }}" class=" text-sm pt-1 pb-1 dark:text-white">
+            <p>{{ .Content }}</p>
+        </div>
+        <div id="comment-tools-{{.ID}}" class="flex flex-row gap-1 align-middle justify-start items-center ">
+            {{template "component-vote-comment.html" .}}
+            {{template "component-reply-comment.html" .}}
+        </div>
+        <div id="comment-form-{{.ID}}"></div>
+
+        <div class="accordion__content overflow-hidden">
+            {{ if .Replies }}
+            <div class="accordion__body  flex flex-col gap-2 pl-3 border-l-2 dark:border-zinc-700">
+                {{ range .Replies.Data }}
                 {{ template "single-comment.html" . }}
+                {{ end }}
+            </div>
+            {{ end }}
+            {{ if .Replies.Data }}
+            <div>
+                <button id="load-more-replies-{{ .ID }}" class="text-xs text-gray-500 dark:text-zinc-500">Load more
+                    replies</button>
+            </div>
             {{ end }}
         </div>
-    {{ end }}
-
+    </div>
 </div>

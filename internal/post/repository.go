@@ -3,6 +3,7 @@ package post
 import (
 	"context"
 	"go-api/pkg/db"
+
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -11,18 +12,19 @@ import (
 
 var postCollection = db.GetCollection("posts")
 
-func DbGetAllPosts(page int, limit int, sortBy string, user interface{} ) ([]Post, int64, error) {
+func DbGetAllPosts(page int64, limit int64, sortBy string, user interface{}) ([]Post, int64, error) {
 
 	var posts []Post
-	pipeline := GetPostsPaginatedPipeline(page, limit, sortBy)
-	
+	pipeline := PostsPaginatedPipeline(page, limit, sortBy)
+
 	if user != nil {
 		nickname := user.(map[string]interface{})["nickname"].(string)
 		if nickname != "" {
-			pipeline = AddPostsVotedPipeline(pipeline, nickname)
+			pipeline = AppendVotedToPipeline(pipeline, nickname)
 		}
 	}
-	pipeline = AddPostsPipelineSorter(pipeline, sortBy)
+
+	pipeline = AppendSorter(pipeline, sortBy)
 
 	cursor, err := postCollection.Aggregate(context.Background(), pipeline)
 	if err != nil {
@@ -39,7 +41,7 @@ func DbGetAllPosts(page int, limit int, sortBy string, user interface{} ) ([]Pos
 
 	totalRecords, err := postCollection.CountDocuments(context.Background(), bson.M{})
 	if err != nil {
-		return posts, 0, err
+		return posts, totalRecords, err
 	}
 
 	return posts, totalRecords, nil
@@ -47,7 +49,7 @@ func DbGetAllPosts(page int, limit int, sortBy string, user interface{} ) ([]Pos
 
 func DbGetPostsByUser(username string) ([]Post, error) {
 	var posts []Post
-	pipeline := GetPostsByUserPipeline(username)
+	pipeline := PostsByUserPipeline(username)
 	cursor, err := postCollection.Aggregate(context.Background(), pipeline)
 	if err != nil {
 		return posts, err
@@ -65,11 +67,11 @@ func DbGetPostsByUser(username string) ([]Post, error) {
 }
 
 func DbGetPostID(id primitive.ObjectID, user interface{}) (Post, error) {
-	
-	pipeline := GetPostPipelineByID(id)
+
+	pipeline := PostByIDPipeline(id)
 	if user != nil {
 		nickname := user.(map[string]interface{})["nickname"].(string)
-		pipeline = AddPostsVotedPipeline(pipeline, nickname)
+		pipeline = AppendVotedToPipeline(pipeline, nickname)
 	}
 
 	var post Post
@@ -83,7 +85,7 @@ func DbGetPostID(id primitive.ObjectID, user interface{}) (Post, error) {
 	for cursor.Next(context.Background()) {
 		cursor.Decode(&post)
 	}
-	
+
 	return post, nil
 }
 

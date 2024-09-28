@@ -1,0 +1,11 @@
+<div>
+    {{ if .error }}
+    {{.error}}
+    {{ end }}
+    {{ range .communities }}
+    <a href="/c/{{ .Name }}/create"
+        class="flex flex-row gap-2 text-xl font-bold dark:text-white cursor-pointer bg-zinc-600 hover:bg-zinc-700 px-10 py-3">
+        {{ .Name }}
+    </a>
+    {{ end }}
+</div>

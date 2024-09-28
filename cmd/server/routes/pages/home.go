@@ -6,48 +6,31 @@ import (
 	"github.com/gin-gonic/gin"
 
 	pr "go-api/internal/post"
-	usr "go-api/internal/user"
-	wlt "go-api/internal/wallet"
+	"go-api/pkg/utils"
 
 	"github.com/gin-contrib/sessions"
 )
 
 func InitializeHomePage(router *gin.Engine) {
-	router.GET("/", func (c *gin.Context) {
-	session := sessions.Default(c)
-	user := session.Get("profile")
+	router.GET("/", func(c *gin.Context) {
+		session := sessions.Default(c)
+		user := session.Get("profile")
 
-	page, limit, sortBy := pr.PostsDefaultQueryParams(c)
-	posts,total, err := pr.DbGetAllPosts(page, limit, sortBy, user)
-	
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
-		return
-	}
+		page, limit, sortBy := utils.DefaultPaginationQueryParams(c)
+		posts, total, err := pr.DbGetAllPosts(page, limit, sortBy, user)
 
-	paginatedPosts := pr.PostPaginatedView(posts, total, page, limit, sortBy)
-	nickname := usr.UserNickName(user)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+			return
+		}
 
-	if nickname == "" {
+		paginatedPosts := pr.ToPostView(posts)
+		pagination := utils.BuildPagination(page, limit, sortBy, total)
+
 		c.HTML(200, "home-page.html", gin.H{
 			"session_user": user,
-			"posts": paginatedPosts,
-			"balance": "XXXX",
+			"posts":        paginatedPosts,
+			"pagination":   pagination,
 		})
-		return
-	}
-
-	balance, err := wlt.DbGetUserWalletBalanceByNickName(nickname)
-	if err != nil {
-		c.HTML(200, "home-page.html", gin.H{
-			"session_user": user,
-			"balance": "XXXX",
-		})
-	}
-	c.HTML(200, "home-page.html", gin.H{
-		"session_user": user,
-		"balance": balance,
-		"posts": paginatedPosts,
-	})
 	})
 }

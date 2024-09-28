@@ -1,72 +1,46 @@
 package community
 
 import (
-	"strconv"
-
-	"github.com/gin-gonic/gin"
+	"errors"
+	"go-api/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func RequiredFields(award Community) bool {
-	if award.Name == "" {
-		return false
+func (c Community) Validate() error {
+	if c.Name == "" {
+		return errors.New("title is required")
 	}
-	
-	return true
+	return nil
 }
 
-func ObjectIdToString(id primitive.ObjectID) string {
-	return id.Hex()
+func (c Community) View() CommunityView {
+	return CommunityView{
+		ID:        utils.ObjectIdToString(c.ID),
+		Name:      c.Name,
+		CreatedAt: utils.DateToString(c.CreatedAt),
+	}
 }
 
-func DateToString(date primitive.DateTime) string {
-	return date.Time().String()
+func ToCommunityView(communities []Community) []CommunityView {
+	var communityViews []CommunityView
+	for _, community := range communities {
+		communityViews = append(communityViews, community.View())
+	}
+	return communityViews
 }
 
 func AddCommunitiesPipelineSorter(pipeline []bson.M, sortBy string) []bson.M {
-	if sortBy == "new"{
-		pipeline = append(pipeline, bson.M{"$sort": bson.M{"created_at": -1}})
-	} else if sortBy == "old"{
-		pipeline = append(pipeline, bson.M{"$sort": bson.M{"created_at": 1}})
-	} else if sortBy == "unawardd"{
-		pipeline = append(pipeline, bson.M{"$sort": bson.M{"awards": 1}})
-	} else {
-		pipeline = append(pipeline, bson.M{"$sort": bson.M{"awards": -1}})
-	}
+	pipeline = append(pipeline, bson.M{"$sort": bson.M{"created_at": -1}})
+
 	return pipeline
 }
 
-func CommunitiesDefaultQueryParams(c *gin.Context) (int, int, string) {
-	page := c.Query("page")
-	limit := c.Query("limit")
-	sortBy := c.Query("sort_by")
-	var p, l int = 0, 0
-	if page == "" {
-		p = 1
-	} else {
-		p,_ = strconv.Atoi(page)
-	}
-	if limit == "" {
-		l = 10
-	} else {
-		l,_ = strconv.Atoi(limit)
-	}
-	if sortBy == "" {
-		sortBy = "best"
-	}
-
-	if l > 100 {
-		l = 100
-	}
-	return p, l, sortBy
-}
-
-func GetCommunitiesPipeline(page int, limit int, sortBy string) []bson.M {
-	skip := int64(page*limit - limit)
+func GetCommunitiesPipeline(page int64, limit int64, sortBy string) []bson.M {
+	skip := page*limit - limit
 	pipeline := []bson.M{
 		{"$skip": skip},
 		{"$limit": limit},
 	}
 	return pipeline
 }
+

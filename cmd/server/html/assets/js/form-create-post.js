@@ -1,5 +1,14 @@
 function ValidateInput(e) {
   const errors = [];
+  console.log("ValidatingInput", e.target.type, e.target.value);
+  if (e.target.type === 'file') {
+    return errors;
+  }
+
+  if (e.target.type === 'radio') {
+    return errors;
+  }
+
   if (e.target.value.length <= 0) {
     errors.push({ target: e.target, message: 'This field is required' });
     e.target.classList.add('border-red-500');
@@ -20,18 +29,6 @@ function ValidateInput(e) {
         );
       }
     }
-
-    if (e.target.name === 'tagify') {
-      const tags = e.target.value.split(',');
-      if (tags.length > 3) {
-        errors.push({ target: e.target, message: 'Only 3 tags are allowed' });
-        e.target.classList.add('border-red-500');
-        e.target.insertAdjacentHTML(
-          'afterend',
-          '<p class="text-red-500 text-xs italic error">Only 3 tags are allowed</p>'
-        );
-      }
-    }
   }
 
   if (errors.length <= 0) {
@@ -47,27 +44,30 @@ function ValidateInput(e) {
 }
 
 function load() {
+
+  document.getElementById('type').addEventListener('change', function(e) {
+    const type = e.target.value;
+    if (type === 'link') {
+      document.getElementById('link').classList.remove('hidden');
+      document.getElementById('files').classList.add('hidden');
+      document.getElementById('content').classList.add('hidden');
+    } else {
+      document.getElementById('link').classList.add('hidden');
+      document.getElementById('files').classList.remove('hidden');
+    }
+
+    if (type === 'text') {
+      document.getElementById('files').classList.add('hidden');
+      document.getElementById('link').classList.add('hidden');
+      document.getElementById('content').classList.remove('hidden');
+    }
+
+  });
+
   var inputs = document.querySelectorAll('input');
   for (var i = 0; i < inputs.length; i++) {
     inputs[i].addEventListener('change', ValidateInput);
   }
-  new Tagify(document.querySelector('input[name=tagify]'), {
-    whitelist: [],
-    maxTags: 5,
-    originalInputValueFormat: (valuesArr) =>
-      valuesArr.map((item) => item.value).join(','),
-  });
-
-  new Tagify(document.querySelector('input[name=disabled-user-input]'), {
-    whitelist: ['foo', 'bar', 'baz'],
-    userInput: false,
-  });
-
-  document
-    .querySelector('input[name=tagify]')
-    .addEventListener('change', function(e) {
-      document.querySelector('input[name=tags]').value = e.target.tagifyValue;
-    });
 
   document.querySelector('form').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -77,25 +77,41 @@ function load() {
       errors.push(...ValidateInput({ target: input }));
     }
     if (errors.length > 0) {
-      alert('Please fix the errors before submitting the posts');
+      console.error('Please fix the errors before submitting the posts', errors);
     } else {
       document.querySelector('form').reset();
     }
   });
-  const quill = new Quill('#editor', {
-    theme: 'snow',
+  
+  document.querySelector('input[name=files]').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.querySelector('img').src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('search').addEventListener('change', function(e) {
+    console.log("Search", e); 
+    console.log("Search", e.target.value);
+
+    if (e.target.value.length <= 0) {
+      document.getElementById('search-results').innerHTML = '';
+    }
+    // if looses  focus
+    if (e.target.focused === false) {
+      document.getElementById('search-results').innerHTML = '';
+    }
+
   });
 
   function update() {
     document.querySelector('textarea[name=content]').value = quill.root.innerHTML;
   }
 
-
-  quill.on(Quill.events.TEXT_CHANGE, update);
-
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   load();
-
 });

@@ -1,0 +1,52 @@
+<div id="posts" class="flex flex-col gap-3">
+    {{ range .posts }}
+    {{ template "single-post.html" .}}
+    {{end}}
+    <div class="text-sm flex flex-row gap-3 justify-center items-center">
+        {{ if .pagination.HasPrev }}
+        <button type="button" hx-get="/ui/posts/all{{.pagination.PrevLink }}" hx-target="#posts">
+            Prev
+        </button>
+        {{end}}
+        {{ .pagination.TotalRecords }}
+        {{ if .pagination.HasNext }}
+        <button type="button" hx-get="/ui/posts/all{{ .pagination.NextLink }}" hx-target="#posts">
+            Next
+        </button>
+        {{end}}
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const input = document.getElementById('search-input');
+        const button = document.getElementById('search-button');
+
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
+            // hide button
+            e.target.classList.add('w-0');
+            e.target.classList.add('hidden');
+            // show input
+            input.hidden = false;
+            input.classList.add('w-40');
+            input.focus();
+        });
+
+        input.addEventListener('blur', function (e) {
+            e.preventDefault();
+            // hide input
+            e.target.hidden = true;
+            e.target.classList.remove('w-40');
+            // show button
+            button.classList.remove('w-0')
+            button.classList.remove('hidden');
+
+        });
+        input.addEventListener('keyup', function (e) {
+            if (e.key === 'Enter') {
+                const search = e.target.value;
+                window.location.href = `/search/${search}`;
+            }
+        });
+    });
+</script>

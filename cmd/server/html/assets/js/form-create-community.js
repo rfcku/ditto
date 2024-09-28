@@ -35,7 +35,7 @@ function load() {
       errors.push(...ValidateInput({ target: input }));
     }
     if (errors.length > 0) {
-      alert('Please fix the errors before submitting the posts');
+      console.error('Please fix the errors before submitting the posts', errors);
     } else {
       document.querySelector('form').reset();
     }

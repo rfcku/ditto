@@ -15,7 +15,7 @@ func RequiredFields(comment Comment) bool {
 	}
 	if comment.AuthorID == "" {
 		return false
-	
+
 	}
 	if comment.Content == "" {
 		return false
@@ -28,11 +28,11 @@ func ObjectIdToString(id primitive.ObjectID) string {
 }
 
 func AddCommentsPipelineSorter(pipeline []bson.M, sortBy string) []bson.M {
-	if sortBy == "new"{
+	if sortBy == "new" {
 		pipeline = append(pipeline, bson.M{"$sort": bson.M{"created_at": -1}})
-	} else if sortBy == "old"{
+	} else if sortBy == "old" {
 		pipeline = append(pipeline, bson.M{"$sort": bson.M{"created_at": 1}})
-	} else if sortBy == "uncommentd"{
+	} else if sortBy == "uncommentd" {
 		pipeline = append(pipeline, bson.M{"$sort": bson.M{"comments": 1}})
 	} else {
 		pipeline = append(pipeline, bson.M{"$sort": bson.M{"comments": -1}})
@@ -48,12 +48,12 @@ func CommentsDefaultQueryParams(c *gin.Context) (int, int, string) {
 	if page == "" {
 		p = 1
 	} else {
-		p,_ = strconv.Atoi(page)
+		p, _ = strconv.Atoi(page)
 	}
 	if limit == "" {
 		l = 10
 	} else {
-		l,_ = strconv.Atoi(limit)
+		l, _ = strconv.Atoi(limit)
 	}
 	if sortBy == "" {
 		sortBy = "best"
@@ -131,7 +131,7 @@ func GetCommentsPaginatedPipeline(page int, limit int, sortBy string, targetID p
 			{
 				"$limit": limit,
 			},
-		};
+		}
 		pipeline = GetPipeline(pipeline)
 		return pipeline
 	}
@@ -161,11 +161,9 @@ func GetCommentsPipeline(page int, limit int, sortBy string, user interface{}, t
 		{"$addFields": bson.M{
 			"votes_total": bson.M{"$size": "$votes"},
 		}},
-		
 	}
 	return pipeline
 }
-
 
 func GetPagination(page int, limit int, sortBy string, total int64, id primitive.ObjectID) Pagination {
 	pagination := Pagination{}
@@ -186,16 +184,16 @@ func GetPagination(page int, limit int, sortBy string, total int64, id primitive
 	} else {
 		pagination.HasPrev = false
 	}
-	pagination.NextLink = "/api/comments/"+ ObjectIdToString(id) +"?page=" + strconv.Itoa(page+1) + "&limit=" + strconv.Itoa(limit)
-	pagination.PrevLink = "/api/comments/"+ ObjectIdToString(id) +"?page=" + strconv.Itoa(page-1) + "&limit=" + strconv.Itoa(limit)
+	pagination.NextLink = "/api/comments/" + ObjectIdToString(id) + "?page=" + strconv.Itoa(page+1) + "&limit=" + strconv.Itoa(limit)
+	pagination.PrevLink = "/api/comments/" + ObjectIdToString(id) + "?page=" + strconv.Itoa(page-1) + "&limit=" + strconv.Itoa(limit)
 	return pagination
 }
 
 func AddCommentsVotedPipeline(pipeline []bson.M, authorID string) []bson.M {
 	pipeline = append(pipeline, bson.M{"$lookup": bson.M{
-		"from":         "votes",
-		"let":          bson.M{"target_id": "$_id"},
-		"pipeline":     []bson.M{
+		"from": "votes",
+		"let":  bson.M{"target_id": "$_id"},
+		"pipeline": []bson.M{
 			{"$match": bson.M{
 				"$expr": bson.M{
 					"$and": []bson.M{
@@ -210,7 +208,7 @@ func AddCommentsVotedPipeline(pipeline []bson.M, authorID string) []bson.M {
 	pipeline = append(pipeline, bson.M{
 		"$addFields": bson.M{
 			"voted": bson.M{"$cond": bson.M{
-				"if":  bson.M{
+				"if": bson.M{
 					"$gt": []interface{}{
 						bson.M{"$size": "$voted"},
 						0,
@@ -236,3 +234,4 @@ func CommentToView(comment Comment) CommentView {
 	commentView.Replies = comment.Replies
 	return commentView
 }
+

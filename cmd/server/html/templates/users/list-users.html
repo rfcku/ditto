@@ -1,0 +1,13 @@
+{{ range .users }}
+<div class="flex flex-col gap-1 border rounded-xl py-5 px-20 w-full">
+    <div class="flex flex-row gap-2">
+        <div class="flex flex-col gap-1">
+            <img src="https://placehold.it/50" class="rounded-full" alt="profile">
+        </div>
+        <div class="flex flex-col gap-1">
+            <div class="text-sm font-bold">{{ .Name }}</div>
+            <div class="text-xs">Created At: {{ .CreatedAt }}</div>
+        </div>
+    </div>
+</div>
+{{ end }}

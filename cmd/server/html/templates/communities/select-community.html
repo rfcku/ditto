@@ -1,0 +1,5 @@
+<select id="community-select" hx-get="/ui/communities/form/select" hx-trigger="load">
+    {{ range .communities }}
+    <option value="{{ .ID }}">{{ .Name }}</option>
+    {{end}}
+</select>

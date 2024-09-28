@@ -1,0 +1,23 @@
+<!doctype html>
+
+<html lang="en-us">
+
+<head>
+    <title>ditto</title>
+    {{ template "block-header.html" .}}
+</head>
+
+<body class="w-screen min-h-screen h-full dark:bg-zinc-800">
+    {{ template "block-nav.html" .}}
+    <main>
+        <section class="p-10 mt-20 flex flex-col justify-center items-center gap-4">
+            <div class="flex flex-col gap-4 max-w-xl" hx-swap="innerHTML">
+                {{ template "block-toolbar.html" .}}
+                {{ template "list-posts.html" .}}
+            </div>
+        </section>
+    </main>
+    {{ template "block-footer.html" .}}
+</body>
+
+</html>

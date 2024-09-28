@@ -1,63 +1,82 @@
-<div id="post-{{ .ID }}" class="p-5 rounded-xl gap-4 border border-1 border w-full">
+<div id="post-{{ .ID }}" class="flex flex-row p-5 gap-4 border-0 border-t-1 w-full">
     <div class="flex flex-col gap-1 overflow-hidden">
         <div class="flex flex-col gap-2">
             <div class="flex flex-row gap-1">
-                <div class="border border-1 rounded-full w-7 h-7"></div>
+                <div id="profile-pic" class="border border-1 dark:border-zinc-700 rounded-full w-7 h-7"></div>
                 <div class="flex flex-col">
                     <div class="flex flex-row gap-1">
-                        <p class="text-xs font-bold ">{{ .Community }}some board</p>
-                        <div class="flex flex-row gap-1 text-xs itemx-center align-middle font-bold ">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        <p class="text-xs font-bold dark:text-white">{{ .Community }}some board</p>
+                        <div
+                            class="flex flex-row gap-1 text-xs itemx-center dark:text-gray-400 align-middle font-bold ">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-3">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                             </svg>
                             <div class="text-gray-400">
                                 {{ .CreatedAt }}
                             </div>
                         </div>
                     </div>
-                    <h5 class="text-xs font-bold text-gray-400">
-                        <a href="/users/{{.AuthorID}}">{{ .AuthorID }}</a>
+                    <h5 class="text-xs font-bold text-gray-400 dark:text-gray-300">
+                        <a href="/u/{{.AuthorID}}">{{ .AuthorID }}</a>
                     </h5>
                 </div>
             </div>
             <div class="flex flex-row gap-1 align-middle items-center">
-                <a
-                    href="/{{ .ID }}"
-                    class="flex flex-row gap-2 text-xl font-bold  cursor-pointer"
-                >
+                <a href="/p/{{ .ID }}" class="flex flex-row gap-2 text-xl font-bold dark:text-white cursor-pointer">
                     {{ .Title }}
                 </a>
             </div>
-            <div class="flex flex-row gap-1 text-xs">
-                {{ range .Tags }}
-                    <span class="text-xs tex  hover: cursor-pointer border border-1 rounded-sm pl-1 pr-1">#{{ . }}</span>
-                {{ end }}
-            </div>
+
         </div>
         <div class="content flex flex-col gap-3">
+            {{ if .Content }}
+            <div>
+                <p class="text-sm dark:text-white">{{ .Content }}</p>
+            </div>
+            {{else}}
+            <div>
+                <p class="text-sm dark:text-white">THIS CONTENT</p>
+            </div>
+            {{end}}
             <div class="w-full">
-                <img src="http://placehold.it/500" class="w-full h-auto rounded-xl" alt="post image">
+
+                <img src="http://placehold.it/500" class="w-full h-auto rounded-sm" alt="post image">
             </div>
             <div class="flex flex-col">
-                <a href="/{{.ID}}" class="text-sm  cursor-pointer truncate">
+                <a href="/p/{{.ID}}" class="text-sm dark:text-white cursor-pointer truncate">
                     {{ .Content }}
                 </a>
             </div>
             <div>
-                <a href="/{{ .Link }}" target="_blank" class="text-xs  cursor-pointer font-bold">
+                <a href="/{{ .Link }}" target="_blank" class="text-xs dark:text-gray-300 cursor-pointer font-bold">
                     {{ .Link }}
                 </a>
             </div>
-            <div class="w-full border border-t-1 border-b-0 border-l-0 border-r-0 border-gray-200 pb-3"></div>
+            <div class="flex flex-row gap-1 text-xs">
+                {{ range .Tags }}
+                <span
+                    class="text-xs dark:text-white dark:bg-zinc-900  hover:cursor-pointer border border-1 dark:border-zinc-900 rounded-sm pl-1 pr-1">#{{
+                    . }}</span>
+                {{ end }}
+            </div>
+            <div
+                class="w-full border border-t-1 border-b-0 border-l-0 border-r-0 border-zinc-200 dark:border-zinc-900 pb-3">
+            </div>
         </div>
         <div class="flex flex-row gap-2">
             {{ template "component-vote-post.html" . }}
-            <a href="/{{ .ID }}" class="text-xs  cursor-pointer border border-1 rounded-xl p-1 pl-2 pr-2">
+            <a href="/p/{{ .ID }}"
+                class="text-xs dark:text-gray-300 cursor-pointer border border-1 rounded-xl p-1 pl-2 pr-2 dark:border-zinc-700">
                 {{ .CommentsTotal }} Comments
             </a>
-            <a href="/{{ .ID }}" class="text-xs flex flex-row align-middle items-center gap-1 cursor-pointer border border-1 rounded-xl p-1 pl-2 pr-2">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
+            <a href="/p/{{ .ID }}"
+                class="text-xs flex flex-row align-middle items-center gap-1 cursor-pointer dark:text-gray-300 border border-1 dark:border-zinc-700  rounded-xl p-1 pl-2 pr-2">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-4">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z" />
                 </svg>
                 Share
             </a>
